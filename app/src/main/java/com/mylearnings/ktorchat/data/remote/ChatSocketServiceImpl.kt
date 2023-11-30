@@ -32,7 +32,7 @@ class ChatSocketServiceImpl(
     override suspend fun initSession(username: String): Resource<Unit> {
         return try {
             socket = httpClient.webSocketSession {
-                url(Endpoints.ChatSocket.url)
+                url("${Endpoints.ChatSocket.url}?username=$username")
             }
             if (socket?.isActive == true) {
                 Resource.Success(Unit)
