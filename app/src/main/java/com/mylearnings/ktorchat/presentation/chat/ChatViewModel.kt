@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.mylearnings.ktorchat.data.remote.ChatSocketService
 import com.mylearnings.ktorchat.data.remote.MessageService
 import com.mylearnings.ktorchat.presentation.common.BaseViewModel
+import com.mylearnings.ktorchat.presentation.constant.Navigation
 import com.mylearnings.ktorchat.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -32,17 +33,13 @@ class ChatViewModel @Inject constructor(
     private val _toastEvent = MutableSharedFlow<String>()
     val toastEvent = _toastEvent.asSharedFlow()
 
-    init {
-        getAllMessages()
-        connect()
-    }
-
-    fun onMessageSent(message: String) {
+    fun onMessageChange(message: String) {
         messageText = message
     }
 
     fun connect() {
-        savedStateHandle.get<String>(USERNAME)?.let {
+        getAllMessages()
+        savedStateHandle.get<String>(Navigation.USERNAME)?.let {
             viewModelScope.launch {
                 when (val result = chatSocketService.initSession(it)) {
                     is Resource.Success -> {
@@ -93,9 +90,5 @@ class ChatViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         disconnect()
-    }
-
-    private companion object {
-        const val USERNAME = "username"
     }
 }
